@@ -612,8 +612,10 @@ object KotlinToJVMBytecodeCompiler {
         sourceFiles: List<KtFile>,
         module: Module?
     ): GenerationState {
-        val isIR = configuration.getBoolean(JVMConfigurationKeys.IR) ||
-                configuration.getBoolean(CommonConfigurationKeys.USE_FIR)
+        // The IR backend does not handle .kts files yet.
+        val anyKts = sourceFiles.any { it.isScript() }
+        val isIR = (configuration.getBoolean(JVMConfigurationKeys.IR) ||
+                configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) && !anyKts
         val generationState = GenerationState.Builder(
             environment.project,
             ClassBuilderFactories.BINARIES,
