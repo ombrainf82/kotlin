@@ -174,7 +174,8 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
             // (MutableMap.remove and getOrDefault). Trying to produce (special) bridges for these methods could
             // result in incorrect bytecode on older JVM versions. However, all such methods are declared
             // in interfaces and thus we don't need a separate check for them.
-            return !irFunction.isFakeOverride || !irFunction.resolveFakeOverride()!!.parentAsClass.isJvmInterface
+            return !irFunction.isFakeOverride || //!irFunction.resolveFakeOverride()!!.parentAsClass.isJvmInterface
+                irFunction.resolvesToClass()
         })
 
         for (member in potentialBridgeTargets) {
@@ -227,12 +228,13 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
                             irClass.addAbstractMethodStub(irFunction)
                         }
                         irFunction.modality != Modality.FINAL -> {
-                            val superTarget = irFunction.overriddenSymbols.first { !it.owner.parentAsClass.isInterface }.owner
+                            val overriddenFromClass = irFunction.overriddenFromClass()!!
                             val superBridge = SpecialBridge(
-                                irFunction, irFunction.jvmMethod, superQualifierSymbol = superTarget.parentAsClass.symbol,
+                                irFunction, irFunction.jvmMethod, superQualifierSymbol = overriddenFromClass.parentAsClass.symbol,
                                 methodInfo = specialBridge.methodInfo?.copy(argumentsToCheck = 0), // For potential argument boxing
                                 isFinal = false,
                             )
+                            val superTarget = overriddenFromClass.takeIf { !it.isFakeOverride } ?: specialBridge.overridden
                             irClass.declarations.remove(irFunction)
                             irClass.addSpecialBridge(superBridge, superTarget)
                         }
@@ -422,7 +424,7 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
                             }
                         }
                         valueParameters = newValueParameters
-                        // After the checks, insert the orignal method body.
+                        // After the checks, insert the original method body.
                         if (body is IrExpressionBody) {
                             +irReturn((body as IrExpressionBody).expression)
                         } else {
@@ -487,3 +489,12 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
 }
 
 private fun IrDeclaration.comesFromJava() = parentAsClass.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+
+// Check whether a fake override will resolve to an implementation in class, not an interface.
+private fun IrSimpleFunction.resolvesToClass(): Boolean {
+    val overrideInSuperClass = overriddenSymbols.firstOrNull { !it.owner.parentAsClass.isJvmInterface }?.owner ?: return false
+    return overrideInSuperClass.modality != Modality.ABSTRACT
+}
+
+private fun IrSimpleFunction.overriddenFromClass(): IrSimpleFunction? =
+    overriddenSymbols.singleOrNull { !it.owner.parentAsClass.isInterface }?.owner
