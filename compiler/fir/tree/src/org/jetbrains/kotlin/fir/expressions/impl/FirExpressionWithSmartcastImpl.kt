@@ -68,4 +68,8 @@ internal class FirExpressionWithSmartcastImpl(
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
+
+    override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
+        throw IllegalStateException()
+    }
 }

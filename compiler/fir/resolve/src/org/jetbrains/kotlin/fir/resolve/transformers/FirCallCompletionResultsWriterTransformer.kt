@@ -224,10 +224,10 @@ class FirCallCompletionResultsWriterTransformer(
             }
         }
 
-        return result.copy(
-            resultType = resultType,
-            typeArguments = typeArguments,
-        ).compose()
+        result.replaceTypeRef(resultType)
+        result.replaceTypeArguments(typeArguments)
+
+        return result.compose()
     }
 
     private fun FirTypeRef.substitute(candidate: Candidate): ConeKotlinType =
