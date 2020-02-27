@@ -149,6 +149,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
             val completionResultsWriter = FirDeclarationCompletionResultsWriter(inferenceSession.createFinalSubstitutor())
             property.transformSingle(completionResultsWriter, null)
         }
+        property.transformOtherChildren(transformer, ResolutionMode.ContextIndependent)
     }
 
     override fun transformWrappedDelegateExpression(
