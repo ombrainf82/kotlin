@@ -8,7 +8,7 @@ FILE: delegateWithLambda.kt
             public get(): R|T|
 
         public final operator fun getValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|T| {
-            ^getValue this@R|/LazyDelegate|.R|FakeOverride</LazyDelegate.value: R|T|>|
+            ^getValue this@R|/LazyDelegate|.R|/LazyDelegate.value|
         }
 
     }

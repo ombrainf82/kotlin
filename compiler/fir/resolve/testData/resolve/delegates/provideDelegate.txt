@@ -9,11 +9,11 @@ FILE: provideDelegate.kt
             public set(value: R|T|): R|kotlin/Unit|
 
         public final operator fun getValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|T| {
-            ^getValue this@R|/Delegate|.R|FakeOverride</Delegate.value: R|T|>|
+            ^getValue this@R|/Delegate|.R|/Delegate.value|
         }
 
         public final operator fun setValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|, newValue: R|T|): R|kotlin/Unit| {
-            this@R|/Delegate|.R|FakeOverride</Delegate.value: R|T|>| = R|<local>/newValue|
+            this@R|/Delegate|.R|/Delegate.value| = R|<local>/newValue|
         }
 
     }
@@ -26,7 +26,7 @@ FILE: provideDelegate.kt
             public get(): R|T|
 
         public final operator fun provideDelegate(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|Delegate<T>| {
-            ^provideDelegate R|/Delegate.Delegate|<R|T|>(this@R|/DelegateProvider|.R|FakeOverride</DelegateProvider.value: R|T|>|)
+            ^provideDelegate R|/Delegate.Delegate|<R|T|>(this@R|/DelegateProvider|.R|/DelegateProvider.value|)
         }
 
     }
